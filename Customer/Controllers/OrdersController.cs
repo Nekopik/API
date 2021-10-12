@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CustomerAPI.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CustomerAPI.Models;
 
 namespace CustomerAPI.Controllers
 {
@@ -24,22 +25,68 @@ namespace CustomerAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrders()
+        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetCustomers()
         {
-            return await _context.Orders.ToListAsync();
+            var orders = await _context.Orders.ToListAsync();
+
+
+            var orderDTO = new List<OrderDTO>();
+
+            foreach (var item in orders)
+            {
+                var dto = new OrderDTO();
+
+                dto.Id = item.Id;
+
+                dto.OrderDate = item.OrderDate;
+
+                dto.CustomerId = item.CustomerId;
+                dto.Customer = item.Customer; // ??
+
+                orderDTO.Add(dto);
+
+            }
+
+            return orderDTO;
+
+
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetOrder(int id)
+        public async Task<ActionResult<IEnumerable<OrderDetailsDTO>>> GetOrder(int id)
         {
             var order = await _context.Orders.FindAsync(id);
+
+            var orderDetailsDto = new List<OrderDetailsDTO>();
 
             if (order == null)
             {
                 return NotFound();
             }
 
-            return order;
+            var dto = new OrderDetailsDTO();
+
+            dto.Id = order.Id;
+
+            dto.OrderDate = order.OrderDate;
+
+            dto.Quantity = order.Quantity;
+
+            dto.OrderPrice = order.OrderPrice;
+
+            dto.CustomerId = order.CustomerId;
+
+            dto.Customer = order.Customer;
+
+            dto.CustomerId = order.ProductId;
+
+           dto.Product = order.Product;
+
+
+            orderDetailsDto.Add(dto);
+
+            return orderDetailsDto;
+
         }
 
         [HttpPut("{id}")]

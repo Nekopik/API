@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CustomerAPI.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using CustomerAPI.Models;
 
 namespace CustomerAPI.Controllers
 {
@@ -24,22 +25,54 @@ namespace CustomerAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
         {
-            return await _context.Products.ToListAsync();
+            var products = await _context.Products.ToListAsync();
+
+
+            var productDTO = new List<ProductDTO>();
+
+            foreach (var item in products)
+            {
+                var dto = new ProductDTO();
+
+                dto.Id = item.Id;
+
+                dto.Name = item.Name;
+
+                productDTO.Add(dto);
+
+            }
+
+            return productDTO;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<IEnumerable<ProductDetailsDTO>>> GetProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
+
+            var productDetailsDto = new List<ProductDetailsDTO>();
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            return product;
+            var dto = new ProductDetailsDTO();
+
+            dto.Id = product.Id;
+
+            dto.Name = product.Name;
+
+            dto.Price = product.Price;
+
+            dto.Currency = product.Currency;
+
+            productDetailsDto.Add(dto);
+
+            return productDetailsDto;
+
         }
 
         [HttpPut("{id}")]

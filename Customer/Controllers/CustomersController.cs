@@ -29,30 +29,63 @@ namespace CustomerAPI.Controllers
         {
             var customers = await _context.Customers.ToListAsync();
 
-            var dto = new CustomerDTO()
+
+            var customersDto = new List<CustomerDTO>();
+
+            foreach (var item in customers)
             {
-                foreach (int id in )
-                    {
-                        
-                    }
-            };
+                var dto = new CustomerDTO();
 
-            return new List<CustomerDTO>();
+                dto.Id = item.Id;
 
-            
+                dto.Name = item.Name;
+
+                customersDto.Add(dto);
+
+            }
+
+            return customersDto;
+
+
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomer(int id)
+        public async Task<ActionResult<IEnumerable<CustomerDetailsDTO>>> GetCustomer(int id)
         {
             var customer = await _context.Customers.FindAsync(id);
+
+            var customersDetailsDto = new List<CustomerDetailsDTO>();
 
             if (customer == null)
             {
                 return NotFound();
             }
 
-            return customer;
+            var dto = new CustomerDetailsDTO();
+
+            dto.Id = customer.Id;
+
+            dto.Name = customer.Name;
+
+            dto.CompanyName = customer.CompanyName;
+
+            dto.Phone = customer.Phone;
+
+            dto.Email = customer.Email;
+
+            dto.Adress = customer.Adress;
+
+            dto.Country = customer.Country;
+
+            dto.State = customer.State;
+
+            dto.City = customer.City;
+
+            dto.Gender = customer.Gender;
+
+            customersDetailsDto.Add(dto);
+
+            return customersDetailsDto;
         }
 
 
