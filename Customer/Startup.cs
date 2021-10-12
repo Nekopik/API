@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Identity;
 using CustomerAPI.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using CustomerAPI.Repository;
+using CustomerAPI.Contracts;
 
 namespace CustomerAPI
 {
@@ -33,6 +35,10 @@ namespace CustomerAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddSingleton<DapperContext>();
+
+            services.AddScoped<IRaportRepository, RaportRepository>();
 
             services.AddControllers();
 
